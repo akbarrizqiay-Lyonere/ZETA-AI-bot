@@ -254,50 +254,6 @@ Lalu buka dashboard:
 http://localhost:3000
 ```
 
-## Recommended First Run
-
-1. Buka dashboard lokal.
-2. Pilih character agent, misalnya `BendaharaRT`.
-3. Ketik:
-
-```text
-buat komunitas baru
-```
-
-4. Isi data dalam satu pesan, contoh:
-
-```text
-Nama komunitas: RT 06 RW 05 Kelapa Gading
-Iuran bulanan: 100000
-Daftar anggota:
-1. Yanto - 081234567890
-2. Siti - 081234567891
-```
-
-5. Buat tagihan:
-
-```text
-tagih semua warga bulan ini
-```
-
-6. Jalankan monitoring:
-
-```text
-cek pembayaran pending
-```
-
-7. Catat pengeluaran:
-
-```text
-catat pengeluaran Rp 20.000 untuk bayar sampah
-```
-
-8. Buat laporan:
-
-```text
-buat laporan bulan ini
-```
-
 ## API Routes
 
 | Method | Endpoint                                       | Description                                          |
