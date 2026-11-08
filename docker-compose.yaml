@@ -1,0 +1,71 @@
+version: "3.8"
+services:
+  postgres:
+    image: ankane/pgvector:latest
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=eliza
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data:rw
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - eliza-network
+  elizaos:
+    image: ${DOCKER_IMAGE}
+    container_name: elizaos
+    environment:
+      # Core AI providers (at least one required)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - OPENROUTER_SMALL_MODEL=${OPENROUTER_SMALL_MODEL:-}
+      - OPENROUTER_LARGE_MODEL=${OPENROUTER_LARGE_MODEL:-}
+      - OPENROUTER_EMBEDDING_MODEL=${OPENROUTER_EMBEDDING_MODEL:-}
+      - OPENROUTER_EMBEDDING_DIMENSIONS=${OPENROUTER_EMBEDDING_DIMENSIONS:-}
+
+      # Database (required for production)
+      - POSTGRES_URL=${POSTGRES_URL}
+
+      # DOKU MCP Payment Integration
+      - DOKU_CLIENT_ID=${DOKU_CLIENT_ID:-}
+      - DOKU_SECRET_KEY=${DOKU_SECRET_KEY:-}
+      - DOKU_AUTHORIZATION=${DOKU_AUTHORIZATION:-}
+      - DOKU_MCP_URL=${DOKU_MCP_URL:-https://api-sandbox.doku.com/doku-mcp-server/mcp}
+      - DOKU_MCP_API_KEY=${DOKU_MCP_API_KEY:-}
+      - DOKU_BASE_URL=${DOKU_BASE_URL:-https://api-sandbox.doku.com}
+      - APP_URL=${APP_URL:-}
+
+      # Server configuration
+      - SERVER_PORT=${SERVER_PORT:-3000}
+      - ELIZA_UI_ENABLE=${ELIZA_UI_ENABLE:-true}
+      - NODE_ENV=${NODE_ENV:-production}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+
+      # Discord (optional)
+      - DISCORD_APPLICATION_ID=${DISCORD_APPLICATION_ID:-}
+      - DISCORD_API_TOKEN=${DISCORD_API_TOKEN:-}
+
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - eliza-network
+
+networks:
+  eliza-network:
+    driver: bridge
+volumes:
+  postgres-data:
